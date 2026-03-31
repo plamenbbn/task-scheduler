@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/moo_placeholder_test.dir/placeholder_test.cpp.o -o moo_placeholder_test  ../libmoo_core.a 

@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/moo_demo.dir/src/main.cpp.o -o moo_demo  libmoo_core.a 

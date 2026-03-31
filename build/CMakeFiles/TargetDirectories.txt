@@ -1,0 +1,10 @@
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/CMakeFiles/moo_core.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/CMakeFiles/moo_demo.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/CMakeFiles/test.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/CMakeFiles/edit_cache.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/CMakeFiles/rebuild_cache.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/CMakeFiles/moo_placeholder_test.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/CMakeFiles/moo_incremental_schedule_test.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/CMakeFiles/test.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/CMakeFiles/edit_cache.dir
+/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/CMakeFiles/rebuild_cache.dir

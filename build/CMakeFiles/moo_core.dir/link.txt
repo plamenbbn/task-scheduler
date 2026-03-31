@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmoo_core.a CMakeFiles/moo_core.dir/src/MooScheduler.cpp.o CMakeFiles/moo_core.dir/src/TaskRegistry.cpp.o CMakeFiles/moo_core.dir/src/optimizer/NSGA2.cpp.o
+/usr/bin/ranlib libmoo_core.a
