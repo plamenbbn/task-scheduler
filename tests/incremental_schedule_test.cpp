@@ -2,7 +2,9 @@
 #include "moo/TaskRegistry.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <random>
@@ -40,12 +42,50 @@ std::shared_ptr<TestTask> makeRandomTask(std::size_t index, std::mt19937_64& rng
         modeDist(rng) ? moo::ExecutionMode::Daemon : moo::ExecutionMode::OneShot);
 }
 
+double priorityScore(const moo::Task& task) {
+    const double totalCost = task.cpuCost() + task.memoryCost() + task.networkCost() + 1e-9;
+    return task.missionBenefit() / totalCost;
+}
+
 std::vector<std::shared_ptr<moo::Task>> collectPlannedTasks(const moo::SchedulePlan& plan) {
     std::vector<std::shared_ptr<moo::Task>> tasks;
     tasks.reserve(plan.oneShotTasks.size() + plan.daemonTasks.size());
     tasks.insert(tasks.end(), plan.oneShotTasks.begin(), plan.oneShotTasks.end());
     tasks.insert(tasks.end(), plan.daemonTasks.begin(), plan.daemonTasks.end());
+    std::sort(tasks.begin(), tasks.end(), [](const auto& lhs, const auto& rhs) {
+        const double lhsPriority = priorityScore(*lhs);
+        const double rhsPriority = priorityScore(*rhs);
+        if (lhsPriority == rhsPriority) {
+            return lhs->name() < rhs->name();
+        }
+        return lhsPriority > rhsPriority;
+    });
     return tasks;
+}
+
+void printPlan(const std::string& label, const moo::SchedulePlan& plan) {
+    const auto plannedTasks = collectPlannedTasks(plan);
+
+    std::cout << label << "\n";
+    std::cout << "summary: benefit=" << std::fixed << std::setprecision(4) << plan.summary.missionBenefit
+              << ", cpu=" << plan.summary.cpuCost
+              << ", memory=" << plan.summary.memoryCost
+              << ", network=" << plan.summary.networkCost << '\n';
+
+    for (std::size_t index = 0; index < plannedTasks.size(); ++index) {
+        const auto& task = plannedTasks[index];
+        std::cout << (index + 1)
+                  << ". name=" << task->name()
+                  << ", priority=" << priorityScore(*task)
+                  << ", benefit=" << task->missionBenefit()
+                  << ", cpu=" << task->cpuCost()
+                  << ", memory=" << task->memoryCost()
+                  << ", network=" << task->networkCost()
+                  << ", mode=" << (task->mode() == moo::ExecutionMode::Daemon ? "daemon" : "one-shot")
+                  << '\n';
+    }
+
+    std::cout << '\n';
 }
 
 void validatePlanAgainstRegistry(const moo::TaskRegistry& registry,
@@ -121,6 +161,7 @@ int main() {
 
         const auto firstPlan = scheduler.buildSchedule(settings);
         validatePlanAgainstRegistry(registry, firstPlan, 10);
+        printPlan("Initial schedule (10 tasks registered)", firstPlan);
 
         for (std::size_t i = 10; i < 20; ++i) {
             registry.registerTask(makeRandomTask(i, rng));
@@ -128,6 +169,7 @@ int main() {
 
         const auto combinedPlan = scheduler.buildSchedule(settings);
         validatePlanAgainstRegistry(registry, combinedPlan, 20);
+        printPlan("Updated schedule (20 tasks registered)", combinedPlan);
 
         std::cout << "incremental_schedule_test passed\n";
         return EXIT_SUCCESS;
