@@ -155,8 +155,8 @@ void validatePlanAgainstRegistry(const moo::TaskRegistry& registry,
     }
 
     const auto plannedTasks = collectPlannedTasks(plan);
-    if (plannedTasks.empty()) {
-        throw std::runtime_error("Expected optimizer to schedule at least one task");
+    if (plannedTasks.size() != registeredTasks.size()) {
+        throw std::runtime_error("Fairness violation: expected all registered tasks to be scheduled");
     }
 
     std::unordered_set<const moo::Task*> seen;
@@ -235,6 +235,15 @@ int main() {
 
         if (trace.entries.empty()) {
             throw std::runtime_error("Expected at least one task execution during scheduler run");
+        }
+
+        for (const auto& task : combinedPlan.oneShotTasks) {
+            const auto executed = std::any_of(trace.entries.begin(), trace.entries.end(), [&](const auto& entry) {
+                return entry.rfind(task->name() + ":", 0) == 0;
+            });
+            if (!executed) {
+                throw std::runtime_error("Fairness violation: one-shot task was never executed: " + task->name());
+            }
         }
 
         std::cout << "executions observed=" << trace.entries.size() << '\n';

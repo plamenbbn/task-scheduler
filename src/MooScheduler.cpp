@@ -3,29 +3,12 @@
 #include <algorithm>
 #include <chrono>
 #include <future>
-#include <iostream>
-#include <limits>
 #include <thread>
 #include <vector>
 
 namespace moo {
 
 namespace {
-
-double benefitCostRatio(const CandidateSolution& candidate) {
-    const double cost = candidate.objectives.cpuCost +
-                        candidate.objectives.memoryCost +
-                        candidate.objectives.networkCost + 1e-9;
-    return candidate.effectiveBenefit / cost;
-}
-
-bool isFeasible(const CandidateSolution& candidate) {
-    return candidate.cpuViolation <= 1e-9 && candidate.memoryViolation <= 1e-9;
-}
-
-double totalViolation(const CandidateSolution& candidate) {
-    return candidate.cpuViolation + candidate.memoryViolation;
-}
 
 double taskPriority(const std::shared_ptr<Task>& task) {
     const double totalCost = task->cpuCost() + task->memoryCost() + task->networkCost() + 1e-9;
@@ -35,7 +18,6 @@ double taskPriority(const std::shared_ptr<Task>& task) {
 struct RunningTask {
     std::shared_ptr<Task> task;
     std::future<void> completion;
-    std::chrono::steady_clock::time_point startedAt;
 };
 
 bool canDispatch(const Task& task,
@@ -72,7 +54,6 @@ void dispatchTask(const std::shared_ptr<Task>& task,
         .completion = std::async(std::launch::async, [task]() {
             task->run();
         }),
-        .startedAt = std::chrono::steady_clock::now(),
     });
 }
 
@@ -82,66 +63,21 @@ MooScheduler::MooScheduler(const TaskRegistry& registry)
     : registry_(registry), rng_(std::random_device{}()) {}
 
 SchedulePlan MooScheduler::buildSchedule(const OptimizationSettings& settings) {
-    std::vector<TaskSnapshot> snapshots;
+    (void)settings;
+
     const auto& tasks = registry_.tasks();
-    snapshots.reserve(tasks.size());
-
-    for (TaskId id = 0; id < tasks.size(); ++id) {
-        const auto& task = tasks[id];
-        snapshots.push_back(TaskSnapshot{
-            .id = id,
-            .missionBenefit = task->missionBenefit(),
-            .costs = task->costs(),
-            .mode = task->mode(),
-            .duration = task->duration(),
-            .daemonFrequency = task->daemonFrequency(),
-        });
-    }
-
-    if (snapshots.empty()) {
+    if (tasks.empty()) {
         return {};
     }
-
-    NSGA2 optimizer{settings.populationSize,
-                    settings.generations,
-                    settings.crossoverProbability,
-                    settings.mutationProbability,
-                    NSGA2::Limits{
-                        .maxCpu = settings.maxCpu,
-                        .maxMemory = settings.maxMemory,
-                        .runFor = settings.planningWindow,
-                    }};
-
-    auto population = optimizer.optimize(snapshots, rng_);
-    if (population.empty()) {
-        return {};
-    }
-
-    const auto bestIter = std::max_element(population.begin(), population.end(), [](const auto& a, const auto& b) {
-        const bool aFeasible = isFeasible(a);
-        const bool bFeasible = isFeasible(b);
-        if (aFeasible != bFeasible) {
-            return !aFeasible;
-        }
-        if (!aFeasible && !bFeasible) {
-            return totalViolation(a) > totalViolation(b);
-        }
-        const double aScore = benefitCostRatio(a);
-        const double bScore = benefitCostRatio(b);
-        if (aScore == bScore) {
-            return a.effectiveBenefit < b.effectiveBenefit;
-        }
-        return aScore < bScore;
-    });
 
     SchedulePlan plan;
-    plan.summary = bestIter->objectives;
 
-    for (std::size_t idx = 0; idx < bestIter->decision.genes.size(); ++idx) {
-        if (bestIter->decision.genes[idx] == 0) {
-            continue;
-        }
-        const auto& task = tasks[idx];
+    for (const auto& task : tasks) {
+        plan.summary.missionBenefit += task->missionBenefit();
+        plan.summary.cpuCost += task->cpuCost();
+        plan.summary.memoryCost += task->memoryCost();
+        plan.summary.networkCost += task->networkCost();
+
         if (task->mode() == ExecutionMode::OneShot) {
             plan.oneShotTasks.push_back(task);
         } else {
