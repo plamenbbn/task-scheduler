@@ -4,6 +4,7 @@
 #include "moo/TaskRegistry.hpp"
 #include "moo/optimizer/NSGA2.hpp"
 
+#include <chrono>
 #include <random>
 
 namespace moo {
@@ -15,13 +16,20 @@ struct OptimizationSettings {
     double mutationProbability = 0.1;
 };
 
+struct ExecutionSettings {
+    std::chrono::milliseconds runFor{10'000};
+    double maxCpu = 100.0;
+    double maxMemory = 100.0;
+    std::chrono::milliseconds schedulerTick{25};
+};
+
 class MooScheduler {
 public:
     explicit MooScheduler(const TaskRegistry& registry);
 
     SchedulePlan buildSchedule(const OptimizationSettings& settings);
 
-    void execute(const SchedulePlan& plan);
+    void execute(const SchedulePlan& plan, const ExecutionSettings& settings = {});
 
 private:
     const TaskRegistry& registry_;

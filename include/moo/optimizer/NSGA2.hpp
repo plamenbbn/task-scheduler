@@ -4,6 +4,7 @@
 #include "moo/Task.hpp"
 #include "moo/Types.hpp"
 
+#include <chrono>
 #include <cstddef>
 #include <random>
 #include <vector>
@@ -15,6 +16,8 @@ struct TaskSnapshot {
     double missionBenefit;
     TaskCosts costs;
     ExecutionMode mode;
+    std::chrono::milliseconds duration;
+    std::chrono::milliseconds daemonFrequency;
 };
 
 struct DecisionVector {
