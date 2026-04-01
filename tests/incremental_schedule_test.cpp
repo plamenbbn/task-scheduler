@@ -84,15 +84,15 @@ void registerInitialTasks(moo::TaskRegistry& registry, ExecutionTrace& trace) {
 }
 
 void registerAdditionalTasks(moo::TaskRegistry& registry, ExecutionTrace& trace) {
-    registry.registerTask(makeTask(10, 96.0, {.cpu = 16.0, .memory = 14.0, .network = 3.0}, moo::ExecutionMode::Daemon, 480ms, trace, 800ms));
+    registry.registerTask(makeTask(10, 42.0, {.cpu = 16.0, .memory = 14.0, .network = 3.0}, moo::ExecutionMode::Daemon, 480ms, trace, 800ms));
     registry.registerTask(makeTask(11, 74.0, {.cpu = 19.0, .memory = 17.0, .network = 4.0}, moo::ExecutionMode::OneShot, 510ms, trace));
-    registry.registerTask(makeTask(12, 91.0, {.cpu = 21.0, .memory = 20.0, .network = 3.0}, moo::ExecutionMode::Daemon, 600ms, trace, 1000ms));
+    registry.registerTask(makeTask(12, 41.0, {.cpu = 21.0, .memory = 20.0, .network = 3.0}, moo::ExecutionMode::Daemon, 600ms, trace, 1000ms));
     registry.registerTask(makeTask(13, 83.0, {.cpu = 17.0, .memory = 16.0, .network = 2.0}, moo::ExecutionMode::OneShot, 430ms, trace));
-    registry.registerTask(makeTask(14, 78.0, {.cpu = 15.0, .memory = 18.0, .network = 2.0}, moo::ExecutionMode::Daemon, 560ms, trace, 950ms));
+    registry.registerTask(makeTask(14, 39.0, {.cpu = 15.0, .memory = 18.0, .network = 2.0}, moo::ExecutionMode::Daemon, 560ms, trace, 950ms));
     registry.registerTask(makeTask(15, 67.0, {.cpu = 18.0, .memory = 19.0, .network = 4.0}, moo::ExecutionMode::OneShot, 650ms, trace));
-    registry.registerTask(makeTask(16, 72.0, {.cpu = 14.0, .memory = 13.0, .network = 2.0}, moo::ExecutionMode::Daemon, 500ms, trace, 1100ms));
+    registry.registerTask(makeTask(16, 37.0, {.cpu = 14.0, .memory = 13.0, .network = 2.0}, moo::ExecutionMode::Daemon, 500ms, trace, 1100ms));
     registry.registerTask(makeTask(17, 64.0, {.cpu = 20.0, .memory = 21.0, .network = 5.0}, moo::ExecutionMode::OneShot, 740ms, trace));
-    registry.registerTask(makeTask(18, 86.0, {.cpu = 18.0, .memory = 17.0, .network = 3.0}, moo::ExecutionMode::Daemon, 620ms, trace, 1050ms));
+    registry.registerTask(makeTask(18, 40.0, {.cpu = 18.0, .memory = 17.0, .network = 3.0}, moo::ExecutionMode::Daemon, 620ms, trace, 1050ms));
     registry.registerTask(makeTask(19, 70.0, {.cpu = 16.0, .memory = 18.0, .network = 4.0}, moo::ExecutionMode::OneShot, 580ms, trace));
 }
 

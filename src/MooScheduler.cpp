@@ -16,7 +16,15 @@ double benefitCostRatio(const CandidateSolution& candidate) {
     const double cost = candidate.objectives.cpuCost +
                         candidate.objectives.memoryCost +
                         candidate.objectives.networkCost + 1e-9;
-    return candidate.objectives.missionBenefit / cost;
+    return candidate.effectiveBenefit / cost;
+}
+
+bool isFeasible(const CandidateSolution& candidate) {
+    return candidate.cpuViolation <= 1e-9 && candidate.memoryViolation <= 1e-9;
+}
+
+double totalViolation(const CandidateSolution& candidate) {
+    return candidate.cpuViolation + candidate.memoryViolation;
 }
 
 double taskPriority(const std::shared_ptr<Task>& task) {
@@ -97,7 +105,12 @@ SchedulePlan MooScheduler::buildSchedule(const OptimizationSettings& settings) {
     NSGA2 optimizer{settings.populationSize,
                     settings.generations,
                     settings.crossoverProbability,
-                    settings.mutationProbability};
+                    settings.mutationProbability,
+                    NSGA2::Limits{
+                        .maxCpu = settings.maxCpu,
+                        .maxMemory = settings.maxMemory,
+                        .runFor = settings.planningWindow,
+                    }};
 
     auto population = optimizer.optimize(snapshots, rng_);
     if (population.empty()) {
@@ -105,7 +118,20 @@ SchedulePlan MooScheduler::buildSchedule(const OptimizationSettings& settings) {
     }
 
     const auto bestIter = std::max_element(population.begin(), population.end(), [](const auto& a, const auto& b) {
-        return benefitCostRatio(a) < benefitCostRatio(b);
+        const bool aFeasible = isFeasible(a);
+        const bool bFeasible = isFeasible(b);
+        if (aFeasible != bFeasible) {
+            return !aFeasible;
+        }
+        if (!aFeasible && !bFeasible) {
+            return totalViolation(a) > totalViolation(b);
+        }
+        const double aScore = benefitCostRatio(a);
+        const double bScore = benefitCostRatio(b);
+        if (aScore == bScore) {
+            return a.effectiveBenefit < b.effectiveBenefit;
+        }
+        return aScore < bScore;
     });
 
     SchedulePlan plan;

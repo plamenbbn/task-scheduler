@@ -14,6 +14,9 @@ struct OptimizationSettings {
     std::size_t generations = 64;
     double crossoverProbability = 0.9;
     double mutationProbability = 0.1;
+    double maxCpu = 100.0;
+    double maxMemory = 100.0;
+    std::chrono::milliseconds planningWindow{10'000};
 };
 
 struct ExecutionSettings {

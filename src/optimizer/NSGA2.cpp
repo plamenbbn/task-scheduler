@@ -8,18 +8,50 @@ namespace moo {
 
 namespace {
 
+bool isFeasible(const CandidateSolution& candidate) {
+    return candidate.cpuViolation <= 1e-9 && candidate.memoryViolation <= 1e-9;
+}
+
+double totalViolation(const CandidateSolution& candidate) {
+    return candidate.cpuViolation + candidate.memoryViolation;
+}
+
 bool dominates(const CandidateSolution& a, const CandidateSolution& b) {
-    const bool betterBenefit = a.objectives.missionBenefit >= b.objectives.missionBenefit;
+    const bool aFeasible = isFeasible(a);
+    const bool bFeasible = isFeasible(b);
+
+    if (aFeasible != bFeasible) {
+        return aFeasible;
+    }
+
+    if (!aFeasible && !bFeasible) {
+        return totalViolation(a) + 1e-9 < totalViolation(b);
+    }
+
+    const bool betterBenefit = a.effectiveBenefit >= b.effectiveBenefit;
     const bool betterCpu = a.objectives.cpuCost <= b.objectives.cpuCost;
     const bool betterMemory = a.objectives.memoryCost <= b.objectives.memoryCost;
     const bool betterNetwork = a.objectives.networkCost <= b.objectives.networkCost;
 
-    const bool strictlyBetter = (a.objectives.missionBenefit > b.objectives.missionBenefit) ||
+    const bool strictlyBetter = (a.effectiveBenefit > b.effectiveBenefit) ||
                                 (a.objectives.cpuCost < b.objectives.cpuCost) ||
                                 (a.objectives.memoryCost < b.objectives.memoryCost) ||
                                 (a.objectives.networkCost < b.objectives.networkCost);
 
     return betterBenefit && betterCpu && betterMemory && betterNetwork && strictlyBetter;
+}
+
+double weightedBenefit(const TaskSnapshot& task, std::chrono::milliseconds planningWindow) {
+    const auto durationMs = std::max(1.0, static_cast<double>(task.duration.count()));
+    if (task.mode == ExecutionMode::OneShot) {
+        return task.missionBenefit;
+    }
+
+    const auto frequencyMs = std::max(1.0, static_cast<double>(task.daemonFrequency.count()));
+    const auto windowMs = std::max(1.0, static_cast<double>(planningWindow.count()));
+    const double invocationCount = std::max(1.0, std::floor(windowMs / frequencyMs));
+    const double dutyCycle = std::min(1.0, durationMs / frequencyMs);
+    return task.missionBenefit * invocationCount * (1.0 + 0.35 * dutyCycle);
 }
 
 }  // namespace
@@ -28,10 +60,22 @@ NSGA2::NSGA2(std::size_t populationSize,
              std::size_t generations,
              double crossoverProbability,
              double mutationProbability)
+    : NSGA2(populationSize,
+            generations,
+            crossoverProbability,
+            mutationProbability,
+            Limits{}) {}
+
+NSGA2::NSGA2(std::size_t populationSize,
+             std::size_t generations,
+             double crossoverProbability,
+             double mutationProbability,
+             Limits limits)
     : populationSize_(populationSize),
       generations_(generations),
       crossoverProbability_(crossoverProbability),
-      mutationProbability_(mutationProbability) {}
+      mutationProbability_(mutationProbability),
+      limits_(limits) {}
 
 std::vector<CandidateSolution> NSGA2::optimize(const std::vector<TaskSnapshot>& tasks,
                                                std::mt19937_64& rng) const {
@@ -143,6 +187,8 @@ CandidateSolution NSGA2::makeRandomCandidate(const std::vector<TaskSnapshot>& ta
 void NSGA2::evaluateCandidate(CandidateSolution& candidate,
                               const std::vector<TaskSnapshot>& tasks) const {
     ScheduleObjective summary{};
+    double effectiveBenefit = 0.0;
+
     for (std::size_t i = 0; i < candidate.decision.genes.size(); ++i) {
         if (candidate.decision.genes[i] == 0) {
             continue;
@@ -151,8 +197,13 @@ void NSGA2::evaluateCandidate(CandidateSolution& candidate,
         summary.cpuCost += tasks[i].costs.cpu;
         summary.memoryCost += tasks[i].costs.memory;
         summary.networkCost += tasks[i].costs.network;
+        effectiveBenefit += weightedBenefit(tasks[i], limits_.runFor);
     }
+
     candidate.objectives = summary;
+    candidate.effectiveBenefit = effectiveBenefit;
+    candidate.cpuViolation = std::max(0.0, summary.cpuCost - limits_.maxCpu);
+    candidate.memoryViolation = std::max(0.0, summary.memoryCost - limits_.maxMemory);
 }
 
 std::vector<std::vector<std::size_t>> NSGA2::fastNonDominatedSort(const std::vector<CandidateSolution>& population) const {
@@ -239,7 +290,7 @@ std::vector<double> NSGA2::crowdingDistances(const std::vector<CandidateSolution
         }
     };
 
-    accumulateObjective([](const CandidateSolution& c) { return c.objectives.missionBenefit; });
+    accumulateObjective([](const CandidateSolution& c) { return -c.effectiveBenefit; });
     accumulateObjective([](const CandidateSolution& c) { return c.objectives.cpuCost; });
     accumulateObjective([](const CandidateSolution& c) { return c.objectives.memoryCost; });
     accumulateObjective([](const CandidateSolution& c) { return c.objectives.networkCost; });
