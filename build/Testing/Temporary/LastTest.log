@@ -1,34 +1,27 @@
-Start testing: Mar 31 11:06 EDT
+Start testing: Mar 31 22:05 EDT
 ----------------------------------------------------------
-1/2 Testing: moo_placeholder
-1/2 Test: moo_placeholder
-Command: "/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/moo_placeholder_test"
-Directory: /home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests
-"moo_placeholder" start time: Mar 31 11:06 EDT
-Output:
-----------------------------------------------------------
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"moo_placeholder" end time: Mar 31 11:06 EDT
-"moo_placeholder" time elapsed: 00:00:00
-----------------------------------------------------------
-
 2/2 Testing: moo_incremental_schedule
 2/2 Test: moo_incremental_schedule
 Command: "/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/moo_incremental_schedule_test"
 Directory: /home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests
-"moo_incremental_schedule" start time: Mar 31 11:06 EDT
+"moo_incremental_schedule" start time: Mar 31 22:05 EDT
 Output:
 ----------------------------------------------------------
+Initial schedule (10 tasks registered)
+summary: benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405
+1. name=task-3, priority=4.9013, benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405, mode=one-shot
+
+Updated schedule (20 tasks registered)
+summary: benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405
+1. name=task-3, priority=4.9013, benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405, mode=one-shot
+
 incremental_schedule_test passed
 <end of output>
 Test time =   0.34 sec
 ----------------------------------------------------------
 Test Passed.
-"moo_incremental_schedule" end time: Mar 31 11:06 EDT
+"moo_incremental_schedule" end time: Mar 31 22:05 EDT
 "moo_incremental_schedule" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Mar 31 11:06 EDT
+End testing: Mar 31 22:05 EDT

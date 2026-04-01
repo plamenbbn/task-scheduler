@@ -1,0 +1,23 @@
+# Visual Studio
+.vscode/
+
+dist/
+
+# CMake generated files and directories
+.cmake/
+build*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# OS-specific environment builds
+winbuild/
+linbuild/
+macbuild/
+refbuild/
+
+# Ignore .tgz files
+*.tgz
+
