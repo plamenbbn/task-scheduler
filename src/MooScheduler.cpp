@@ -1,4 +1,5 @@
 #include "moo/MooScheduler.hpp"
+#include "moo/ThreadPool.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -9,6 +10,8 @@
 namespace moo {
 
 namespace {
+
+constexpr std::size_t kHardMaxThreadPoolSize = 8;
 
 double taskPriority(const std::shared_ptr<Task>& task) {
     const double totalCost = task->cpuCost() + task->memoryCost() + task->networkCost() + 1e-9;
@@ -23,8 +26,10 @@ struct RunningTask {
 bool canDispatch(const Task& task,
                  double usedCpu,
                  double usedMemory,
+                 std::size_t runningCount,
                  const ExecutionSettings& settings) {
-    return (usedCpu + task.cpuCost() <= settings.maxCpu) &&
+    return runningCount < settings.maxThreads &&
+           (usedCpu + task.cpuCost() <= settings.maxCpu) &&
            (usedMemory + task.memoryCost() <= settings.maxMemory);
 }
 
@@ -44,6 +49,7 @@ void reclaimFinishedTasks(std::vector<RunningTask>& running,
 }
 
 void dispatchTask(const std::shared_ptr<Task>& task,
+                  ThreadPool& threadPool,
                   std::vector<RunningTask>& running,
                   double& usedCpu,
                   double& usedMemory) {
@@ -51,7 +57,7 @@ void dispatchTask(const std::shared_ptr<Task>& task,
     usedMemory += task->memoryCost();
     running.push_back(RunningTask{
         .task = task,
-        .completion = std::async(std::launch::async, [task]() {
+        .completion = threadPool.submit([task]() {
             task->run();
         }),
     });
@@ -101,9 +107,12 @@ SchedulePlan MooScheduler::buildSchedule(const OptimizationSettings& settings) {
 }
 
 void MooScheduler::execute(const SchedulePlan& plan, const ExecutionSettings& settings) {
-    if (settings.runFor.count() <= 0) {
+    if (settings.runFor.count() <= 0 || settings.maxThreads == 0) {
         return;
     }
+
+    const std::size_t effectiveMaxThreads = std::min<std::size_t>(settings.maxThreads, kHardMaxThreadPoolSize);
+    ThreadPool threadPool{effectiveMaxThreads};
 
     const auto startedAt = std::chrono::steady_clock::now();
     const auto deadline = startedAt + settings.runFor;
@@ -133,8 +142,14 @@ void MooScheduler::execute(const SchedulePlan& plan, const ExecutionSettings& se
         reclaimFinishedTasks(running, usedCpu, usedMemory);
 
         for (auto it = pendingOneShots.begin(); it != pendingOneShots.end();) {
-            if (canDispatch(**it, usedCpu, usedMemory, settings)) {
-                dispatchTask(*it, running, usedCpu, usedMemory);
+            if (canDispatch(**it, usedCpu, usedMemory, running.size(), ExecutionSettings{
+                    .runFor = settings.runFor,
+                    .maxCpu = settings.maxCpu,
+                    .maxMemory = settings.maxMemory,
+                    .maxThreads = effectiveMaxThreads,
+                    .schedulerTick = settings.schedulerTick,
+                })) {
+                dispatchTask(*it, threadPool, running, usedCpu, usedMemory);
                 it = pendingOneShots.erase(it);
             } else {
                 ++it;
@@ -143,8 +158,15 @@ void MooScheduler::execute(const SchedulePlan& plan, const ExecutionSettings& se
 
         const auto now = std::chrono::steady_clock::now();
         for (auto& daemon : daemonStates) {
-            if (now >= daemon.nextEligible && canDispatch(*daemon.task, usedCpu, usedMemory, settings)) {
-                dispatchTask(daemon.task, running, usedCpu, usedMemory);
+            if (now >= daemon.nextEligible &&
+                canDispatch(*daemon.task, usedCpu, usedMemory, running.size(), ExecutionSettings{
+                    .runFor = settings.runFor,
+                    .maxCpu = settings.maxCpu,
+                    .maxMemory = settings.maxMemory,
+                    .maxThreads = effectiveMaxThreads,
+                    .schedulerTick = settings.schedulerTick,
+                })) {
+                dispatchTask(daemon.task, threadPool, running, usedCpu, usedMemory);
                 daemon.nextEligible = now + daemon.task->daemonFrequency();
             }
         }

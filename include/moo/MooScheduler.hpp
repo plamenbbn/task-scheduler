@@ -23,6 +23,7 @@ struct ExecutionSettings {
     std::chrono::milliseconds runFor{10'000};
     double maxCpu = 100.0;
     double maxMemory = 100.0;
+    std::size_t maxThreads = 8;
     std::chrono::milliseconds schedulerTick{25};
 };
 

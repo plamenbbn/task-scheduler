@@ -1,27 +1,165 @@
-Start testing: Mar 31 22:05 EDT
+Start testing: Apr 06 20:34 EDT
 ----------------------------------------------------------
-2/2 Testing: moo_incremental_schedule
-2/2 Test: moo_incremental_schedule
+1/3 Testing: moo_placeholder
+1/3 Test: moo_placeholder
+Command: "/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/moo_placeholder_test"
+Directory: /home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests
+"moo_placeholder" start time: Apr 06 20:34 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"moo_placeholder" end time: Apr 06 20:34 EDT
+"moo_placeholder" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: moo_incremental_schedule
+2/3 Test: moo_incremental_schedule
 Command: "/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/moo_incremental_schedule_test"
 Directory: /home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests
-"moo_incremental_schedule" start time: Mar 31 22:05 EDT
+"moo_incremental_schedule" start time: Apr 06 20:34 EDT
 Output:
 ----------------------------------------------------------
 Initial schedule (10 tasks registered)
-summary: benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405
-1. name=task-3, priority=4.9013, benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405, mode=one-shot
+summary: benefit=640.0000, cpu=247.0000, memory=238.0000, network=58.0000
+1. name=task-2, priority=2.1429, benefit=90.0000, cpu=20.0000, memory=18.0000, network=4.0000, duration_ms=700, mode=daemon, frequency_ms=1200
+2. name=task-7, priority=2.0541, benefit=76.0000, cpu=18.0000, memory=16.0000, network=3.0000, duration_ms=520, mode=daemon, frequency_ms=900
+3. name=task-4, priority=1.8723, benefit=88.0000, cpu=22.0000, memory=20.0000, network=5.0000, duration_ms=640, mode=daemon, frequency_ms=1600
+4. name=task-9, priority=1.2778, benefit=69.0000, cpu=25.0000, memory=24.0000, network=5.0000, duration_ms=830, mode=daemon, frequency_ms=1800
+5. name=task-0, priority=1.0000, benefit=62.0000, cpu=30.0000, memory=24.0000, network=8.0000, duration_ms=850, mode=one-shot
+6. name=task-8, priority=0.9783, benefit=45.0000, cpu=20.0000, memory=21.0000, network=5.0000, duration_ms=540, mode=one-shot
+7. name=task-1, priority=0.9667, benefit=58.0000, cpu=28.0000, memory=26.0000, network=6.0000, duration_ms=780, mode=one-shot
+8. name=task-3, priority=0.8308, benefit=54.0000, cpu=26.0000, memory=32.0000, network=7.0000, duration_ms=960, mode=one-shot
+9. name=task-5, priority=0.7581, benefit=47.0000, cpu=24.0000, memory=29.0000, network=9.0000, duration_ms=620, mode=one-shot
+10. name=task-6, priority=0.7500, benefit=51.0000, cpu=34.0000, memory=28.0000, network=6.0000, duration_ms=1020, mode=one-shot
 
 Updated schedule (20 tasks registered)
-summary: benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405
-1. name=task-3, priority=4.9013, benefit=84.1971, cpu=5.0075, memory=11.1303, network=1.0405, mode=one-shot
+summary: benefit=1197.0000, cpu=421.0000, memory=411.0000, network=90.0000
+1. name=task-13, priority=2.3714, benefit=83.0000, cpu=17.0000, memory=16.0000, network=2.0000, duration_ms=430, mode=one-shot
+2. name=task-2, priority=2.1429, benefit=90.0000, cpu=20.0000, memory=18.0000, network=4.0000, duration_ms=700, mode=daemon, frequency_ms=1200
+3. name=task-7, priority=2.0541, benefit=76.0000, cpu=18.0000, memory=16.0000, network=3.0000, duration_ms=520, mode=daemon, frequency_ms=900
+4. name=task-4, priority=1.8723, benefit=88.0000, cpu=22.0000, memory=20.0000, network=5.0000, duration_ms=640, mode=daemon, frequency_ms=1600
+5. name=task-11, priority=1.8500, benefit=74.0000, cpu=19.0000, memory=17.0000, network=4.0000, duration_ms=510, mode=one-shot
+6. name=task-19, priority=1.8421, benefit=70.0000, cpu=16.0000, memory=18.0000, network=4.0000, duration_ms=580, mode=one-shot
+7. name=task-15, priority=1.6341, benefit=67.0000, cpu=18.0000, memory=19.0000, network=4.0000, duration_ms=650, mode=one-shot
+8. name=task-17, priority=1.3913, benefit=64.0000, cpu=20.0000, memory=21.0000, network=5.0000, duration_ms=740, mode=one-shot
+9. name=task-9, priority=1.2778, benefit=69.0000, cpu=25.0000, memory=24.0000, network=5.0000, duration_ms=830, mode=daemon, frequency_ms=1800
+10. name=task-16, priority=1.2759, benefit=37.0000, cpu=14.0000, memory=13.0000, network=2.0000, duration_ms=500, mode=daemon, frequency_ms=1100
+11. name=task-10, priority=1.2727, benefit=42.0000, cpu=16.0000, memory=14.0000, network=3.0000, duration_ms=480, mode=daemon, frequency_ms=800
+12. name=task-14, priority=1.1143, benefit=39.0000, cpu=15.0000, memory=18.0000, network=2.0000, duration_ms=560, mode=daemon, frequency_ms=950
+13. name=task-18, priority=1.0526, benefit=40.0000, cpu=18.0000, memory=17.0000, network=3.0000, duration_ms=620, mode=daemon, frequency_ms=1050
+14. name=task-0, priority=1.0000, benefit=62.0000, cpu=30.0000, memory=24.0000, network=8.0000, duration_ms=850, mode=one-shot
+15. name=task-8, priority=0.9783, benefit=45.0000, cpu=20.0000, memory=21.0000, network=5.0000, duration_ms=540, mode=one-shot
+16. name=task-1, priority=0.9667, benefit=58.0000, cpu=28.0000, memory=26.0000, network=6.0000, duration_ms=780, mode=one-shot
+17. name=task-12, priority=0.9318, benefit=41.0000, cpu=21.0000, memory=20.0000, network=3.0000, duration_ms=600, mode=daemon, frequency_ms=1000
+18. name=task-3, priority=0.8308, benefit=54.0000, cpu=26.0000, memory=32.0000, network=7.0000, duration_ms=960, mode=one-shot
+19. name=task-5, priority=0.7581, benefit=47.0000, cpu=24.0000, memory=29.0000, network=9.0000, duration_ms=620, mode=one-shot
+20. name=task-6, priority=0.7500, benefit=51.0000, cpu=34.0000, memory=28.0000, network=6.0000, duration_ms=1020, mode=one-shot
 
+task-13 running for task-11430 running for  ms510 ms
+
+task-15 running for 650 ms
+task-19 running for 580 ms
+task-17 running for 740 ms
+task-8 running for 540 ms
+task-2 running for 700 ms
+task-7 running for 520 ms
+task-4 running for 640 ms
+task-16 running for 500 ms
+task-3 running for 960 ms
+task-10 running for 480 ms
+task-14 running for 560 ms
+task-0 running for 850 ms
+task-1 running for 780 ms
+task-16 running for 500 ms
+task-5 running for 620 ms
+task-6 running for 1020 ms
+task-2task-7 running for  running for 520700 ms ms
+
+task-4 running for 640 ms
+task-16 running for 500 ms
+task-9 running for 830 ms
+task-14task-10 running for  running for 480560 ms ms
+
+task-18 running for 620 ms
+task-7 running for 520 ms
+task-2 running for 700 ms
+task-12 running for 600 ms
+task-10 running for 480 ms
+task-16 running for 500 ms
+task-14 running for 560 ms
+task-7 running for 520 ms
+task-4 running for 640 ms
+task-18 running for 620 ms
+task-10 running for 480 ms
+task-2 running for 700 ms
+task-12 running for 600 ms
+task-14 running for 560 ms
+task-9 running for 830 ms
+task-7 running for 520 ms
+task-16 running for 500 ms
+task-10 running for 480 ms
+task-18 running for 620 ms
+task-12 running for 600 ms
+task-14 running for 560 ms
+task-2 running for 700 ms
+task-4 running for 640 ms
+task-7 running for 520 ms
+task-10 running for 480 ms
+task-16 running for 500 ms
+task-18 running for 620 ms
+task-12 running for 600 ms
+task-9 running for 830 ms
+task-14 running for 560 ms
+task-7 running for 520 ms
+task-2 running for 700 ms
+task-10 running for 480 ms
+task-16task-4 running for  running for 500640 ms ms
+
+task-18 running for 620 ms
+task-14 running for 560 ms
+task-12 running for 600 ms
+task-7 running for 520 ms
+task-10 running for 480 ms
+task-2 running for 700 ms
+task-9 running for 830 ms
+task-16task-18 running for  running for 620500 ms ms
+
+task-14 running for 560 ms
+task-7 running for 520 ms
+task-4 running for 640 ms
+task-10 running for 480 ms
+task-12 running for 600 ms
+task-2 running for 700 ms
+task-18 running for 620 ms
+task-16 running for 500 ms
+executions observed=77
 incremental_schedule_test passed
 <end of output>
-Test time =   0.34 sec
+Test time =  10.54 sec
 ----------------------------------------------------------
 Test Passed.
-"moo_incremental_schedule" end time: Mar 31 22:05 EDT
-"moo_incremental_schedule" time elapsed: 00:00:00
+"moo_incremental_schedule" end time: Apr 06 20:34 EDT
+"moo_incremental_schedule" time elapsed: 00:00:10
 ----------------------------------------------------------
 
-End testing: Mar 31 22:05 EDT
+3/3 Testing: moo_thread_pool_execution
+3/3 Test: moo_thread_pool_execution
+Command: "/home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests/moo_thread_pool_execution_test"
+Directory: /home/plamen/.openclaw/workspace/moo-task-scheduler/build/tests
+"moo_thread_pool_execution" start time: Apr 06 20:34 EDT
+Output:
+----------------------------------------------------------
+observed max concurrency=3
+thread_pool_execution_test passed
+<end of output>
+Test time =   2.01 sec
+----------------------------------------------------------
+Test Passed.
+"moo_thread_pool_execution" end time: Apr 06 20:34 EDT
+"moo_thread_pool_execution" time elapsed: 00:00:02
+----------------------------------------------------------
+
+End testing: Apr 06 20:34 EDT

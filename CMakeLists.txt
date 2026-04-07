@@ -10,6 +10,7 @@ option(MOO_BUILD_TESTS "Build unit tests" OFF)
 add_library(moo_core
     src/MooScheduler.cpp
     src/TaskRegistry.cpp
+    src/ThreadPool.cpp
     src/optimizer/NSGA2.cpp
 )
 

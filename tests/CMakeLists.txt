@@ -5,3 +5,7 @@ add_test(NAME moo_placeholder COMMAND moo_placeholder_test)
 add_executable(moo_incremental_schedule_test incremental_schedule_test.cpp)
 target_link_libraries(moo_incremental_schedule_test PRIVATE moo_core)
 add_test(NAME moo_incremental_schedule COMMAND moo_incremental_schedule_test)
+
+add_executable(moo_thread_pool_execution_test thread_pool_execution_test.cpp)
+target_link_libraries(moo_thread_pool_execution_test PRIVATE moo_core)
+add_test(NAME moo_thread_pool_execution COMMAND moo_thread_pool_execution_test)
